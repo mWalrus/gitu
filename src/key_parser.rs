@@ -71,7 +71,13 @@ fn parse_modifier(input: &str) -> IResult<&str, Modifiers> {
 
 fn parse_char_key(input: &str) -> IResult<&str, (Modifiers, KeyCode)> {
     none_of("<>")(input)?;
-    map(anychar, |c| (Modifiers::NONE, KeyCode::Char(c)))(input)
+    map(anychar, |c| {
+        if c.is_ascii_uppercase() {
+            (Modifiers::SHIFT, KeyCode::Char(c))
+        } else {
+            (Modifiers::NONE, KeyCode::Char(c))
+        }
+    })(input)
 }
 
 #[cfg(test)]
